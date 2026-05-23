@@ -22,7 +22,8 @@
   /* Custom cursor */
   .cursor-dot {
     width: 6px; height: 6px;
-    background: #111111;
+    background: #ffffff;
+    mix-blend-mode: difference;
     border-radius: 50%;
     position: fixed;
     pointer-events: none;
@@ -33,7 +34,8 @@
 
   .cursor-ring {
     width: 32px; height: 32px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    mix-blend-mode: difference;
     border-radius: 50%;
     position: fixed;
     pointer-events: none;
