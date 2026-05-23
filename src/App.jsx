@@ -4,6 +4,7 @@ import CampaignBanner from './components/CampaignBanner'
 import ProductGrid from './components/ProductGrid'
 import CartDrawer from './components/CartDrawer'
 import BasketPage from './pages/BasketPage'
+import CollectionPage from './pages/CollectionPage'
 import AtelierBookingDrawer from './components/AtelierBookingDrawer'
 import { useBasket } from './hooks/useBasket'
 import { useProducts } from './hooks/useProducts'
@@ -131,7 +132,6 @@ function HomePage({ basket, products }) {
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-black noise">
-      <CustomCursor />
       <CampaignBanner campaigns={products.campaigns} />
 
       {/* Modern High-Fashion Navigation */}
@@ -144,9 +144,9 @@ function HomePage({ basket, products }) {
           
           {/* Left links */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#collection" className="font-body text-[9px] text-black/60 hover:text-black tracking-[0.25em] uppercase transition-colors font-medium magnetic">
+            <Link to="/collection" className="font-body text-[9px] text-black/60 hover:text-black tracking-[0.25em] uppercase transition-colors font-medium magnetic">
               Collection
-            </a>
+            </Link>
             <a href="#style-board-section" className="font-body text-[9px] text-black/60 hover:text-black tracking-[0.25em] uppercase transition-colors font-medium magnetic">
               Lookbook
             </a>
@@ -219,12 +219,12 @@ function HomePage({ basket, products }) {
             
             <div className="flex items-center self-start">
               <span className="h-10 w-[1px] bg-black/10" />
-              <a 
-                href="#collection" 
+              <Link 
+                to="/collection" 
                 className="font-body text-[10px] text-black tracking-[0.3em] uppercase hover:text-[#C6A43F] transition-colors py-3 px-8 font-medium"
               >
                 Shop Now
-              </a>
+              </Link>
               <span className="h-10 w-[1px] bg-black/10" />
             </div>
           </div>
@@ -276,8 +276,7 @@ function HomePage({ basket, products }) {
                     <div 
                       key={item.id}
                       onClick={() => {
-                        const el = document.getElementById('collection')
-                        el?.scrollIntoView({ behavior: 'smooth' })
+                        window.location.href = '/collection'
                       }}
                       className="flex items-center gap-3 cursor-pointer group text-left"
                     >
@@ -484,16 +483,88 @@ function HomePage({ basket, products }) {
         </div>
       </section>
 
-      {/* Main product catalog display */}
-      <ProductGrid 
-        products={products.products} 
-        loading={products.loading} 
-        error={products.error}
-        onAddToCart={handleAddToCart}
-        onViewProduct={handleViewProduct}
-        addingId={addingId}
-      />
+      {/* Featured Arrivals Section */}
+      <section className="py-16 md:py-32 bg-[#FAF9F6] border-t border-black/5">
+        <div className="max-w-[1600px] mx-auto px-6 md:px-12 text-center">
+          <span className="font-body text-[9px] text-black/40 tracking-widest uppercase block font-medium mb-4">
+            Curated Selection
+          </span>
+          <h2 className="font-display text-3xl md:text-4xl text-black font-semibold mb-8 md:mb-16">
+            Featured Arrivals
+          </h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-left">
+            {products.products.slice(0, 4).map(item => {
+              const imgUrl = item.image_urls?.[0] ? api.imageUrl(item.image_urls[0]) : null
+              return (
+                <div key={item.id} className="group cursor-pointer magnetic" onClick={() => window.location.href = '/collection'}>
+                  <div className="aspect-[3/4] bg-white border border-black/5 p-4 mb-4 overflow-hidden relative">
+                    {imgUrl ? (
+                      <img src={imgUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    ) : (
+                      <div className="w-full h-full skeleton" />
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+                  </div>
+                  <h3 className="font-display text-sm text-black font-medium truncate">{item.name}</h3>
+                  <p className="font-body text-[10px] text-black/50 mt-1">{api.formatPrice(item.price_minor, item.currency)}</p>
+                </div>
+              )
+            })}
+          </div>
 
+          <div className="mt-16 text-center">
+            <Link 
+              to="/collection" 
+              className="inline-block border border-black/20 px-8 py-4 font-body text-[10px] tracking-widest uppercase hover:bg-black hover:text-white transition-all duration-300"
+            >
+              View Full Archive
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Atelier Process Section */}
+      <section className="py-0 bg-black text-white">
+        <div className="grid grid-cols-1 md:grid-cols-2">
+          {(() => {
+            const processProduct = products.products[2] || products.products[0]
+            const processImgUrl = processProduct?.image_urls?.[0] ? api.imageUrl(processProduct.image_urls[0]) : null
+            return (
+              <div className="aspect-[4/5] sm:aspect-square md:aspect-auto h-[400px] sm:h-[500px] md:h-auto md:min-h-[600px] relative overflow-hidden bg-[#111]">
+                {processImgUrl ? (
+                  <img 
+                    src={processImgUrl} 
+                    alt="Tailoring Process - African Heritage" 
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 object-top md:object-center"
+                  />
+                ) : (
+                  <div className="absolute inset-0 w-full h-full skeleton opacity-20" />
+                )}
+              </div>
+            )
+          })()}
+          <div className="flex flex-col justify-center p-8 sm:p-12 md:p-16 lg:p-32 text-left">
+            <span className="font-body text-[9px] text-white/50 tracking-[0.4em] uppercase block font-semibold mb-4 md:mb-6">
+              The Heritage
+            </span>
+            <h2 className="font-display text-3xl md:text-5xl font-medium leading-[1.2] mb-8">
+              Constructed with <span className="text-[#C6A43F] italic">Precision</span>
+            </h2>
+            <p className="font-body text-sm text-white/70 leading-relaxed mb-10 max-w-md">
+              Every Mensah garment is a testament to the art of bespoke tailoring. We source the finest lightweight linens and woven fabrics, crafting each piece to harmonize with the gentleman's natural silhouette. From the initial measurement to the final stitch, our process is unhurried, meticulous, and entirely personal.
+            </p>
+            <div className="flex items-center gap-6">
+              <button 
+                onClick={() => setBookingOpen(true)}
+                className="border border-white/20 px-8 py-4 font-body text-[10px] tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300 book-trigger"
+              >
+                Book A Fitting
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* High-Fashion Light-Themed Footer */}
       <footer className="bg-[#ffffff] pt-24 pb-12 px-6 md:px-12 border-t border-black/5 relative z-10 text-left select-none">
         <div className="max-w-[1600px] mx-auto">
@@ -515,7 +586,7 @@ function HomePage({ basket, products }) {
             <div>
               <h4 className="font-body text-[9px] text-black/50 tracking-[0.25em] uppercase mb-6 font-semibold">Atelier Curation</h4>
               <ul className="space-y-3 font-body text-xs text-black/50 font-medium">
-                <li><a href="#collection" className="hover:text-black transition-colors">The complete Archive</a></li>
+                <li><Link to="/collection" className="hover:text-black transition-colors">The complete Archive</Link></li>
                 <li><button onClick={() => setBookingOpen(true)} className="hover:text-black transition-colors book-trigger">Atelier fitting scheduler</button></li>
                 <li><a href="#style-board-section" className="hover:text-black transition-colors">Digital Styling Dresser</a></li>
               </ul>
@@ -574,8 +645,10 @@ export default function App() {
 
   return (
     <ProductsContext.Provider value={{ getSuggestions: products.getSuggestions }}>
+      <CustomCursor />
       <Routes>
         <Route path="/" element={<HomePage basket={basket} products={products} />} />
+        <Route path="/collection" element={<CollectionPage products={products} onAddToCart={basket.addToCart} />} />
         <Route path="/basket/:basketId" element={<BasketPage />} />
       </Routes>
     </ProductsContext.Provider>
