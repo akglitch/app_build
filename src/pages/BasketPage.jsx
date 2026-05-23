@@ -123,7 +123,7 @@ export default function BasketPage() {
           <button
             onClick={() => {
               const msg = `👔 Shared Curation Checkout - Basket ID: ${basketId}. Total: GHS ${totalGHS.toFixed(2)}. Please confirm my order details.`
-              window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
+              window.open(`https://wa.me/233209742331?text=${encodeURIComponent(msg)}`, '_blank')
             }}
             className="w-full flex items-center justify-center gap-3 py-3.5 font-body font-semibold text-xs tracking-widest uppercase text-white transition-all duration-300"
             style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)' }}

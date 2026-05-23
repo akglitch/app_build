@@ -4,7 +4,7 @@ export default function WhatsAppButton({ getMessage, basketId, className = '' })
   const handleClick = () => {
     const message = getMessage()
     const encoded = encodeURIComponent(message)
-    window.open(`https://wa.me/?text=${encoded}`, '_blank')
+    window.open(`https://wa.me/233209742331?text=${encoded}`, '_blank')
   }
 
   if (!basketId) return null
