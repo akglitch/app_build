@@ -6,7 +6,7 @@ export default function QRShareCard({ basketId }) {
 
   if (!basketId) return null
 
-  const shareUrl = `${window.location.origin}/basket/${basketId}`
+  const shareUrl = 'https://app-build-blue.vercel.app/'
 
   const handleCopy = async () => {
     try {
