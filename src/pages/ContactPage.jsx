@@ -19,7 +19,23 @@ export default function ContactPage({ basket, products }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     const subjectLabel = SUBJECTS.find(s => s.id === subject)?.label || ''
-    const body = `👔 *Mensah Atelier Enquiry*\nName: *${name}*\nEmail: *${email}*\nSubject: *${subjectLabel}*\n\n${message}`
+    const body = `👔  *MENSAH ATELIER*
+━━━━━━━━━━━━━━━━━━━
+_Atelier Enquiry_
+
+👤  *From*
+*${name}*
+✉️  ${email}
+
+📌  *Subject*
+${subjectLabel}
+
+💬  *Message*
+${message}
+
+━━━━━━━━━━━━━━━━━━━
+
+✨  _Awaiting the atelier's response._`
     window.open(`https://wa.me/233209742331?text=${encodeURIComponent(body)}`, '_blank')
     setSent(true)
   }

@@ -122,7 +122,26 @@ export default function BasketPage() {
           
           <button
             onClick={() => {
-              const msg = `👔 Shared Curation Checkout - Basket ID: ${basketId}. Total: GHS ${totalGHS.toFixed(2)}. Please confirm my order details.`
+              const itemLines = basket.items.map(i => {
+                const lineTotal = ((i.price_minor * i.qty) / 100).toFixed(2)
+                return `•  ${i.name}\n    _×${i.qty}_  ·  *GHS ${lineTotal}*`
+              }).join('\n\n')
+
+              const msg = `👔  *MENSAH ATELIER*
+━━━━━━━━━━━━━━━━━━━
+_Shared Curation Checkout_
+
+📋  *Basket Reference*
+\`${basketId}\`
+
+🛍️  *Curated Pieces*
+${itemLines}
+
+━━━━━━━━━━━━━━━━━━━
+*TOTAL  ·  GHS ${totalGHS.toFixed(2)}*
+━━━━━━━━━━━━━━━━━━━
+
+✨  _Kindly confirm and advise on payment._`
               window.open(`https://wa.me/233209742331?text=${encodeURIComponent(msg)}`, '_blank')
             }}
             className="w-full flex items-center justify-center gap-3 py-3.5 font-body font-semibold text-xs tracking-widest uppercase text-white transition-all duration-300"

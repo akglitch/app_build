@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import CampaignBanner from './components/CampaignBanner'
 import ProductGrid from './components/ProductGrid'
 import CartDrawer from './components/CartDrawer'
@@ -12,6 +12,7 @@ import ProductDetailsPage from './pages/ProductDetailsPage'
 import CheckoutPage from './pages/CheckoutPage'
 import NotFoundPage from './pages/NotFoundPage'
 import AtelierBookingDrawer from './components/AtelierBookingDrawer'
+import MobileNav from './components/MobileNav'
 import { useBasket } from './hooks/useBasket'
 import { useProducts } from './hooks/useProducts'
 import api from './api/mensahApi'
@@ -84,8 +85,10 @@ function CustomCursor() {
 function HomePage({ basket, products }) {
   const [cartOpen, setCartOpen] = useState(false)
   const [bookingOpen, setBookingOpen] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [addingId, setAddingId] = useState(null)
   const [scrolled, setScrolled] = useState(false)
+  const navigate = useNavigate()
   
   // Interactive styling board states
   const [selectedMainOutfit, setSelectedMainOutfit] = useState(null)
@@ -147,7 +150,18 @@ function HomePage({ basket, products }) {
           : 'bg-transparent py-6'
       }`}>
         <div className="max-w-[1600px] mx-auto px-6 md:px-12 flex items-center justify-between">
-          
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileNavOpen(true)}
+            className="md:hidden flex flex-col gap-[5px] justify-center items-start w-8 h-8 magnetic"
+            aria-label="Open menu"
+          >
+            <span className="block w-6 h-px bg-black" />
+            <span className="block w-5 h-px bg-black" />
+            <span className="block w-6 h-px bg-black" />
+          </button>
+
           {/* Left links */}
           <div className="hidden md:flex items-center gap-8">
             <Link to="/collection" className="font-body text-[9px] text-black/60 hover:text-black tracking-[0.25em] uppercase transition-colors font-medium magnetic">
@@ -168,7 +182,7 @@ function HomePage({ basket, products }) {
           </div>
 
           {/* Centered Logo */}
-          <Link to="/" className="flex flex-col items-center mx-auto md:mx-0 magnetic relative">
+          <Link to="/" className="flex flex-col items-center magnetic relative">
             <span className="font-display text-2xl tracking-[0.25em] uppercase text-black font-semibold">
               MENSAH
             </span>
@@ -284,9 +298,7 @@ function HomePage({ basket, products }) {
                   return (
                     <div
                       key={item.id}
-                      onClick={() => {
-                        window.location.href = `/product/${item.id}`
-                      }}
+                      onClick={() => navigate(`/product/${item.id}`)}
                       className="flex items-center gap-3 cursor-pointer group text-left"
                     >
                       {imgUrl ? (
@@ -506,7 +518,7 @@ function HomePage({ basket, products }) {
             {products.products.slice(0, 4).map(item => {
               const imgUrl = item.image_urls?.[0] ? api.imageUrl(item.image_urls[0]) : null
               return (
-                <div key={item.id} className="group cursor-pointer magnetic" onClick={() => window.location.href = `/product/${item.id}`}>
+                <div key={item.id} className="group cursor-pointer magnetic" onClick={() => navigate(`/product/${item.id}`)}>
                   <div className="aspect-[3/4] bg-white border border-black/5 p-4 mb-4 overflow-hidden relative">
                     {imgUrl ? (
                       <img src={imgUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -646,9 +658,18 @@ function HomePage({ basket, products }) {
       />
 
       {/* Atelier Consultation Booking Drawer */}
-      <AtelierBookingDrawer 
-        isOpen={bookingOpen} 
+      <AtelierBookingDrawer
+        isOpen={bookingOpen}
         onClose={() => setBookingOpen(false)}
+      />
+
+      {/* Mobile Navigation Drawer */}
+      <MobileNav
+        isOpen={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+        onOpenBooking={() => setBookingOpen(true)}
+        onOpenCart={() => setCartOpen(true)}
+        basket={basket}
       />
     </div>
   )
