@@ -122,11 +122,44 @@ export default function CheckoutPage({ basket, products }) {
     setPlaced(true)
 
     if (payment === 'whatsapp') {
-      const itemLines = basket.items.map(i => `• ${i.name} ×${i.qty}`).join('\n')
-      const msg =
-        `👔 *MENSAH ATELIER ORDER*\nRef: *${ref}*\nClient: *${form.name}*\nEmail: ${form.email}\nPhone: ${form.phone}\n\n` +
-        `*Delivery:* ${selectedDelivery.label}\n${form.address}, ${form.city}, ${form.country}\n\n` +
-        `*Items:*\n${itemLines}\n\nSubtotal: GHS ${subtotal.toFixed(2)}\nDelivery: GHS ${deliveryFee.toFixed(2)}\n*Total: GHS ${total.toFixed(2)}*\n\nPlease confirm and advise payment.`
+      const itemLines = basket.items.map(i => {
+        const lineTotal = ((i.price_minor * i.qty) / 100).toFixed(2)
+        return `•  ${i.name}\n    _×${i.qty}_  ·  *GHS ${lineTotal}*`
+      }).join('\n\n')
+
+      const notesBlock = form.notes
+        ? `📝  *Atelier Notes*\n_${form.notes}_\n\n`
+        : ''
+
+      const msg = `👔  *MENSAH ATELIER*
+━━━━━━━━━━━━━━━━━━━
+_Curation Order Confirmation_
+
+📋  *Order Reference*
+\`${ref}\`
+
+👤  *Honourable Client*
+*${form.name}*
+✉️  ${form.email}
+📱  ${form.phone}
+
+📦  *Delivery  ·  ${selectedDelivery.label}*
+${form.address}
+${form.city}, ${form.country}
+
+🛍️  *Curated Pieces*
+${itemLines}
+
+━━━━━━━━━━━━━━━━━━━
+Subtotal       GHS ${subtotal.toFixed(2)}
+Delivery       GHS ${deliveryFee.toFixed(2)}
+*TOTAL          GHS ${total.toFixed(2)}*
+━━━━━━━━━━━━━━━━━━━
+
+💳  *Payment Method*
+${PAYMENT_METHODS.find(p => p.id === payment).label}
+
+${notesBlock}✨  _Please confirm to proceed with fulfilment. The atelier will reply within the hour._`
       window.open(`https://wa.me/233209742331?text=${encodeURIComponent(msg)}`, '_blank')
     }
 

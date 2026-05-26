@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import CampaignBanner from './components/CampaignBanner'
 import ProductGrid from './components/ProductGrid'
 import CartDrawer from './components/CartDrawer'
@@ -12,6 +12,8 @@ import ProductDetailsPage from './pages/ProductDetailsPage'
 import CheckoutPage from './pages/CheckoutPage'
 import NotFoundPage from './pages/NotFoundPage'
 import AtelierBookingDrawer from './components/AtelierBookingDrawer'
+import MobileNav from './components/MobileNav'
+import HeroBanner from './components/HeroBanner'
 import { useBasket } from './hooks/useBasket'
 import { useProducts } from './hooks/useProducts'
 import api from './api/mensahApi'
@@ -84,8 +86,10 @@ function CustomCursor() {
 function HomePage({ basket, products }) {
   const [cartOpen, setCartOpen] = useState(false)
   const [bookingOpen, setBookingOpen] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [addingId, setAddingId] = useState(null)
   const [scrolled, setScrolled] = useState(false)
+  const navigate = useNavigate()
   
   // Interactive styling board states
   const [selectedMainOutfit, setSelectedMainOutfit] = useState(null)
@@ -133,21 +137,29 @@ function HomePage({ basket, products }) {
     setCartOpen(true)
   }
 
-  // Hero showcase items matching screenshot 1 right column
-  const heroShowcaseItems = products.products.slice(0, 3)
-
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-black noise">
       <CampaignBanner campaigns={products.campaigns} />
 
       {/* Modern High-Fashion Navigation */}
       <nav className={`fixed w-full z-40 transition-all duration-500 ${
-        scrolled 
-          ? 'bg-white/90 backdrop-blur-md border-b border-black/5 py-4 shadow-sm' 
-          : 'bg-transparent py-6'
+        scrolled
+          ? 'bg-white/90 backdrop-blur-md border-b border-black/5 py-4 shadow-sm'
+          : 'bg-white/70 backdrop-blur-sm py-5 border-b border-black/5'
       }`}>
         <div className="max-w-[1600px] mx-auto px-6 md:px-12 flex items-center justify-between">
-          
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileNavOpen(true)}
+            className="md:hidden flex flex-col gap-[5px] justify-center items-start w-8 h-8 magnetic"
+            aria-label="Open menu"
+          >
+            <span className="block w-6 h-px bg-black" />
+            <span className="block w-5 h-px bg-black" />
+            <span className="block w-6 h-px bg-black" />
+          </button>
+
           {/* Left links */}
           <div className="hidden md:flex items-center gap-8">
             <Link to="/collection" className="font-body text-[9px] text-black/60 hover:text-black tracking-[0.25em] uppercase transition-colors font-medium magnetic">
@@ -168,7 +180,7 @@ function HomePage({ basket, products }) {
           </div>
 
           {/* Centered Logo */}
-          <Link to="/" className="flex flex-col items-center mx-auto md:mx-0 magnetic relative">
+          <Link to="/" className="flex flex-col items-center magnetic relative">
             <span className="font-display text-2xl tracking-[0.25em] uppercase text-black font-semibold">
               MENSAH
             </span>
@@ -208,117 +220,9 @@ function HomePage({ basket, products }) {
       </nav>
 
       {/* ═══════════════════════════════════
-         CINEMATIC HERO (Inspiration Screenshot 1 Layout)
+         HERO BANNER — rotating featured-look carousel
          ═══════════════════════════════════ */}
-      <section className="min-h-screen pt-24 pb-12 flex items-center bg-[#FAF9F6] border-b border-black/5 relative overflow-hidden select-none">
-        <div className="max-w-[1600px] mx-auto px-6 md:px-12 w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-          
-          {/* Column 1: Left Editorial Text (Width ~30% -> 4 cols) */}
-          <div className="md:col-span-4 flex flex-col justify-center text-left py-8">
-            <span className="font-body text-[#C6A43F] text-[9px] tracking-[0.4em] uppercase mb-4 font-semibold">
-              Mensah Atelier Heritage
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl leading-[1.1] text-black font-medium mb-6">
-              Master the<br />
-              <span className="italic font-normal text-[#C6A43F]">Bespoke Cut</span>
-            </h1>
-            <p className="font-body text-xs text-black/50 leading-relaxed max-w-sm mb-10">
-              When standard patterns won't suffice, lightweight premium kaftans, Senator sets, and double-breasted linen suits keep things highly sophisticated and breathable.
-            </p>
-            
-            <div className="flex items-center self-start">
-              <span className="h-10 w-[1px] bg-black/10" />
-              <Link 
-                to="/collection" 
-                className="font-body text-[10px] text-black tracking-[0.3em] uppercase hover:text-[#C6A43F] transition-colors py-3 px-8 font-medium"
-              >
-                Shop Now
-              </Link>
-              <span className="h-10 w-[1px] bg-black/10" />
-            </div>
-          </div>
-
-          {/* Column 2: Large Vertical Portrait — live API image from first product */}
-          {(() => {
-            const heroProduct = products.products[0]
-            const heroImgUrl = heroProduct?.image_urls?.[0]
-              ? api.imageUrl(heroProduct.image_urls[0])
-              : null
-            return (
-              <div className="md:col-span-5 flex justify-center items-center">
-                <div className="w-full max-w-md aspect-[3/4] bg-[#FAF9F6] border border-black/10 p-2 shadow-sm relative group overflow-hidden">
-                  {heroImgUrl ? (
-                    <img
-                      src={heroImgUrl}
-                      alt={heroProduct?.name || 'Mensah Atelier Editorial Look'}
-                      className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full skeleton" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70 pointer-events-none" />
-                  <div className="absolute bottom-6 left-6 text-white text-left pointer-events-none">
-                    <span className="font-body text-[8px] tracking-[0.3em] uppercase block text-white/60">Atelier Look</span>
-                    <span className="font-display text-base font-normal italic">
-                      {heroProduct?.name || 'Accra Atelier Campaign'}
-                    </span>
-                    {heroProduct && (
-                      <span className="font-body text-[9px] text-[#F0D060] block mt-1 font-semibold">
-                        {api.formatPrice(heroProduct.price_minor, heroProduct.currency)}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          })()}
-
-          {/* Column 3: Vertical Outfit Index (Width ~25% -> 3 cols) */}
-          <div className="md:col-span-3 flex flex-col justify-between py-6 h-full border-l border-black/5 pl-8 hidden md:flex self-stretch">
-            <div className="space-y-8">
-              <span className="font-body text-[9px] text-black/40 tracking-widest uppercase block font-medium">Atelier Selection</span>
-              
-              <div className="space-y-6">
-                {heroShowcaseItems.map(item => {
-                  const imgUrl = item.image_urls?.[0] ? api.imageUrl(item.image_urls[0]) : null
-                  return (
-                    <div
-                      key={item.id}
-                      onClick={() => {
-                        window.location.href = `/product/${item.id}`
-                      }}
-                      className="flex items-center gap-3 cursor-pointer group text-left"
-                    >
-                      {imgUrl ? (
-                        <img 
-                          src={imgUrl} 
-                          alt={item.name} 
-                          className="w-12 h-14 object-cover border border-black/5 bg-[#f4f4f4] group-hover:border-[#C6A43F] transition-colors" 
-                        />
-                      ) : (
-                        <div className="w-12 h-14 bg-[#f4f4f4] border border-black/5 flex items-center justify-center font-display text-xs text-black/20 italic">M</div>
-                      )}
-                      <div>
-                        <p className="font-display text-xs font-semibold text-black leading-tight truncate max-w-[140px]">{item.name}</p>
-                        <p className="font-body text-[9px] text-[#C6A43F] mt-0.5 font-medium">{api.formatPrice(item.price_minor, item.currency)}</p>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Down Arrow Indicator */}
-            <div className="pt-8 flex flex-col items-center gap-2">
-              <span className="font-body text-[7px] text-black/30 tracking-[0.3em] uppercase">Scroll Down</span>
-              <svg className="w-4 h-4 text-black/30 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
-
-        </div>
-      </section>
+      <HeroBanner onOpenBooking={() => setBookingOpen(true)} />
 
       {/* ═══════════════════════════════════
          INTERACTIVE "COMPLETE THE LOOK" STYLING BOARD (New Feature)
@@ -506,7 +410,7 @@ function HomePage({ basket, products }) {
             {products.products.slice(0, 4).map(item => {
               const imgUrl = item.image_urls?.[0] ? api.imageUrl(item.image_urls[0]) : null
               return (
-                <div key={item.id} className="group cursor-pointer magnetic" onClick={() => window.location.href = `/product/${item.id}`}>
+                <div key={item.id} className="group cursor-pointer magnetic" onClick={() => navigate(`/product/${item.id}`)}>
                   <div className="aspect-[3/4] bg-white border border-black/5 p-4 mb-4 overflow-hidden relative">
                     {imgUrl ? (
                       <img src={imgUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -646,9 +550,18 @@ function HomePage({ basket, products }) {
       />
 
       {/* Atelier Consultation Booking Drawer */}
-      <AtelierBookingDrawer 
-        isOpen={bookingOpen} 
+      <AtelierBookingDrawer
+        isOpen={bookingOpen}
         onClose={() => setBookingOpen(false)}
+      />
+
+      {/* Mobile Navigation Drawer */}
+      <MobileNav
+        isOpen={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+        onOpenBooking={() => setBookingOpen(true)}
+        onOpenCart={() => setCartOpen(true)}
+        basket={basket}
       />
     </div>
   )

@@ -65,14 +65,30 @@ export default function AtelierBookingDrawer({ isOpen, onClose }) {
 
   const handleWhatsAppConfirm = () => {
     if (!successTicket) return
-    const message = `👔 *MENSAH ATELIER RESERVATION*
-ID: *${successTicket.reservationId}*
-Client: *${successTicket.name}*
-Service: *${successTicket.service}* (${successTicket.location})
-Date: *${successTicket.date}* at *${successTicket.time}*
-Preference: *${successTicket.drink}*
+    const message = `👔  *MENSAH ATELIER*
+━━━━━━━━━━━━━━━━━━━
+_Bespoke Fitting Reservation_
 
-Please confirm my luxury appointment details.`
+📋  *Reservation ID*
+\`${successTicket.reservationId}\`
+
+👤  *Honourable Client*
+*${successTicket.name}*
+✉️  ${successTicket.email}
+
+✂️  *Service*
+${successTicket.service}
+📍 _${successTicket.location}_
+
+📅  *Appointment*
+${successTicket.date}  ·  ${successTicket.time}
+
+🍾  *Atelier Refreshment*
+${successTicket.drink}
+
+━━━━━━━━━━━━━━━━━━━
+
+✨  _Kindly confirm my private invitation._`
     const encoded = encodeURIComponent(message)
     window.open(`https://wa.me/233209742331?text=${encoded}`, '_blank')
   }

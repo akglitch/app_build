@@ -137,17 +137,33 @@ export function useBasket() {
 
   // WhatsApp message based on cart value
   const getWhatsAppMessage = useCallback(() => {
-    const itemNames = items.map(i => `${i.name} (x${i.qty})`).join(', ')
-    const total = `GHS ${totalGHS.toFixed(2)}`
     const id = basketId || 'N/A'
+    const itemLines = items.map(i => {
+      const lineTotal = ((i.price_minor * i.qty) / 100).toFixed(2)
+      return `•  ${i.name}\n    _×${i.qty}_  ·  *GHS ${lineTotal}*`
+    }).join('\n\n')
 
-    if (totalGHS < 100) {
-      return `✨ Just placed an order! Basket ID: ${id}. Items: ${itemNames}. Total: ${total}. Please help me complete this purchase.`
-    } else if (totalGHS <= 500) {
-      return `🛍️ Ready to checkout! Basket ID: ${id}. Items: ${itemNames}. Total: ${total}. Ready for payment.`
-    } else {
-      return `👔 VIP Order - Basket ID: ${id}. Items: ${itemNames}. Total: ${total}. Please prioritize this luxury order.`
-    }
+    const tier = totalGHS > 500
+      ? { emoji: '👑', label: 'VIP CURATION', closing: 'Kindly prioritise this acquisition — the atelier awaits your confirmation.' }
+      : totalGHS >= 100
+      ? { emoji: '👔', label: 'PREMIUM CURATION', closing: 'Ready to finalise payment at your convenience.' }
+      : { emoji: '✨', label: 'ATELIER ORDER', closing: 'Please advise on next steps to complete this curation.' }
+
+    return `${tier.emoji}  *MENSAH ATELIER*
+━━━━━━━━━━━━━━━━━━━
+_${tier.label}_
+
+📋  *Basket Reference*
+\`${id}\`
+
+🛍️  *Curated Pieces*
+${itemLines}
+
+━━━━━━━━━━━━━━━━━━━
+*TOTAL  ·  GHS ${totalGHS.toFixed(2)}*
+━━━━━━━━━━━━━━━━━━━
+
+✨  _${tier.closing}_`
   }, [items, totalGHS, basketId])
 
   return {
