@@ -5,6 +5,12 @@ import ProductGrid from './components/ProductGrid'
 import CartDrawer from './components/CartDrawer'
 import BasketPage from './pages/BasketPage'
 import CollectionPage from './pages/CollectionPage'
+import AboutPage from './pages/AboutPage'
+import ContactPage from './pages/ContactPage'
+import PrivacyPage from './pages/PrivacyPage'
+import ProductDetailsPage from './pages/ProductDetailsPage'
+import CheckoutPage from './pages/CheckoutPage'
+import NotFoundPage from './pages/NotFoundPage'
 import AtelierBookingDrawer from './components/AtelierBookingDrawer'
 import { useBasket } from './hooks/useBasket'
 import { useProducts } from './hooks/useProducts'
@@ -147,10 +153,13 @@ function HomePage({ basket, products }) {
             <Link to="/collection" className="font-body text-[9px] text-black/60 hover:text-black tracking-[0.25em] uppercase transition-colors font-medium magnetic">
               Collection
             </Link>
-            <a href="#style-board-section" className="font-body text-[9px] text-black/60 hover:text-black tracking-[0.25em] uppercase transition-colors font-medium magnetic">
-              Lookbook
-            </a>
-            <button 
+            <Link to="/about" className="font-body text-[9px] text-black/60 hover:text-black tracking-[0.25em] uppercase transition-colors font-medium magnetic">
+              Heritage
+            </Link>
+            <Link to="/contact" className="font-body text-[9px] text-black/60 hover:text-black tracking-[0.25em] uppercase transition-colors font-medium magnetic">
+              Contact
+            </Link>
+            <button
               onClick={() => setBookingOpen(true)}
               className="font-body text-[9px] text-[#C6A43F] hover:text-[#B5942B] tracking-[0.25em] uppercase transition-colors font-semibold magnetic book-trigger"
             >
@@ -273,10 +282,10 @@ function HomePage({ basket, products }) {
                 {heroShowcaseItems.map(item => {
                   const imgUrl = item.image_urls?.[0] ? api.imageUrl(item.image_urls[0]) : null
                   return (
-                    <div 
+                    <div
                       key={item.id}
                       onClick={() => {
-                        window.location.href = '/collection'
+                        window.location.href = `/product/${item.id}`
                       }}
                       className="flex items-center gap-3 cursor-pointer group text-left"
                     >
@@ -497,7 +506,7 @@ function HomePage({ basket, products }) {
             {products.products.slice(0, 4).map(item => {
               const imgUrl = item.image_urls?.[0] ? api.imageUrl(item.image_urls[0]) : null
               return (
-                <div key={item.id} className="group cursor-pointer magnetic" onClick={() => window.location.href = '/collection'}>
+                <div key={item.id} className="group cursor-pointer magnetic" onClick={() => window.location.href = `/product/${item.id}`}>
                   <div className="aspect-[3/4] bg-white border border-black/5 p-4 mb-4 overflow-hidden relative">
                     {imgUrl ? (
                       <img src={imgUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -587,31 +596,37 @@ function HomePage({ basket, products }) {
               <h4 className="font-body text-[9px] text-black/50 tracking-[0.25em] uppercase mb-6 font-semibold">Atelier Curation</h4>
               <ul className="space-y-3 font-body text-xs text-black/50 font-medium">
                 <li><Link to="/collection" className="hover:text-black transition-colors">The complete Archive</Link></li>
+                <li><Link to="/about" className="hover:text-black transition-colors">Our Heritage</Link></li>
                 <li><button onClick={() => setBookingOpen(true)} className="hover:text-black transition-colors book-trigger">Atelier fitting scheduler</button></li>
                 <li><a href="#style-board-section" className="hover:text-black transition-colors">Digital Styling Dresser</a></li>
+                <li><Link to="/checkout" className="hover:text-black transition-colors">Curation Checkout</Link></li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-body text-[9px] text-black/50 tracking-[0.25em] uppercase mb-6 font-semibold">Atelier Locations</h4>
-              <p className="font-body text-xs text-black/50 leading-relaxed font-medium">
+              <p className="font-body text-xs text-black/50 leading-relaxed font-medium mb-3">
                 Accra Flagship Atelier<br />
                 Osu Neighborhood, Accra, Ghana<br />
                 Bookings: virtual & physical fittings.
               </p>
+              <Link to="/contact" className="font-body text-[9px] text-[#C6A43F] hover:text-[#B5942B] tracking-[0.2em] uppercase font-semibold transition-colors">
+                Reach the Atelier →
+              </Link>
             </div>
           </div>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-black/5">
             <p className="font-body text-[8px] text-black/30 tracking-[0.15em] uppercase mb-4 md:mb-0">
               © {new Date().getFullYear()} Mensah Atelier. Designed for the discerning gentleman.
             </p>
             <div className="flex gap-6">
-              {['Privacy policy', 'Terms of fitting service'].map(link => (
-                <a key={link} href="#" className="font-body text-[8px] text-black/30 hover:text-black tracking-[0.15em] uppercase transition-colors font-medium">
-                  {link}
-                </a>
-              ))}
+              <Link to="/privacy" className="font-body text-[8px] text-black/30 hover:text-black tracking-[0.15em] uppercase transition-colors font-medium">
+                Privacy policy
+              </Link>
+              <Link to="/about" className="font-body text-[8px] text-black/30 hover:text-black tracking-[0.15em] uppercase transition-colors font-medium">
+                Terms of fitting service
+              </Link>
             </div>
           </div>
         </div>
@@ -648,8 +663,14 @@ export default function App() {
       <CustomCursor />
       <Routes>
         <Route path="/" element={<HomePage basket={basket} products={products} />} />
-        <Route path="/collection" element={<CollectionPage products={products} onAddToCart={basket.addToCart} />} />
+        <Route path="/collection" element={<CollectionPage products={products} onAddToCart={basket.addToCart} basket={basket} />} />
+        <Route path="/product/:id" element={<ProductDetailsPage basket={basket} products={products} />} />
+        <Route path="/checkout" element={<CheckoutPage basket={basket} products={products} />} />
+        <Route path="/about" element={<AboutPage basket={basket} products={products} />} />
+        <Route path="/contact" element={<ContactPage basket={basket} products={products} />} />
+        <Route path="/privacy" element={<PrivacyPage basket={basket} products={products} />} />
         <Route path="/basket/:basketId" element={<BasketPage />} />
+        <Route path="*" element={<NotFoundPage basket={basket} products={products} />} />
       </Routes>
     </ProductsContext.Provider>
   )

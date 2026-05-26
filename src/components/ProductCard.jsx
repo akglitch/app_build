@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { Link } from 'react-router-dom'
 import api from '../api/mensahApi'
 import SmartBundle from './SmartBundle'
 import confetti from 'canvas-confetti'
@@ -176,6 +177,15 @@ function ProductModal({ product, imageUrl, onAddToCart, addingId, onClose }) {
               >
                 {isAdding ? 'Adding to Basket…' : product.in_stock ? `Acquire — Size ${selectedSize}` : 'Currently Unavailable'}
               </button>
+
+              {/* View Full Detail Page link */}
+              <Link
+                to={`/product/${product.id}`}
+                onClick={onClose}
+                className="block w-full py-3 border border-black/10 text-black/70 font-body text-[10px] tracking-[0.3em] uppercase font-semibold hover:bg-black hover:text-white hover:border-black transition-colors text-center"
+              >
+                View Full Atelier Page →
+              </Link>
 
               {/* Key details */}
               <div className="grid grid-cols-2 gap-3">

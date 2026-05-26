@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../api/mensahApi'
 import WhatsAppButton from './WhatsAppButton'
 import QRShareCard from './QRShareCard'
@@ -142,6 +143,15 @@ export default function CartDrawer({ isOpen, onClose, items, basketId, totalGHS,
             </div>
 
             <div className="h-px bg-black/5" />
+
+            {/* Checkout */}
+            <Link
+              to="/checkout"
+              onClick={onClose}
+              className="w-full block text-center py-3.5 bg-black text-white font-body text-xs tracking-widest uppercase hover:bg-black/90 transition-colors font-semibold"
+            >
+              Proceed to Checkout
+            </Link>
 
             {/* WhatsApp Checkout Button */}
             <WhatsAppButton getMessage={getWhatsAppMessage} basketId={basketId} />
